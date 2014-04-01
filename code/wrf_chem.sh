@@ -77,11 +77,13 @@ id7=`sbatch -d afterok:$id6 wrf.submit | cut -d ' ' -f 4`
 #RESULTS TRANSFER
 cd /work/swanson/jingchao/wrf/data/wrf_chem
 find . -type d -mtime +2 | xargs rm -rf
-cd /work/swanson/jingchao/wrf/data/wrf_chem/`date +%Y%m%d`
+[[ ! -d "`date +%Y%m%d`" ]] && mkdir `date +%Y%m%d`; cd `date +%Y%m%d`
 ndir="`date +%y%m%d%H`"
 mkdir $ndir && cd $ndir
 cp /work/swanson/jingchao/wrf/WRF_forecast/WPS/dir.submit ./
 id8=`sbatch -d afterany:$id7 dir.submit | cut -d ' ' -f 4`
 
-#echo "Submitted batch job $id1(ungrib) --> $id2(metgrid) --> $id3(real) --> $id4(wrf) --> $id5(File_transfer)"
-echo "Submitted batch job $id1 (ungrib) --> $id2 (metgrid) --> $id3 (WEPS) --> $id4 (REAL1) --> $id5 (convert) --> $id6 (real2) --> $id7 (wrf) --> $id8 (transfer)"
+cd /work/swanson/jingchao/wrf/code
+id9=`sbatch -d afterany:$id7 ncl.submit | cut -d ' ' -f 4`
+
+echo "Submitted batch job $id1 (ungrib) -> $id2 (metgrid) -> $id3 (WEPS) -> $id4 (REAL1) -> $id5 (convert) -> $id6 (real2) -> $id7 (wrf) -> $id8 (transfer) -> $id9 (NCL)"
