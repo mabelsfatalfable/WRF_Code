@@ -85,5 +85,6 @@ id8=`sbatch -d afterany:$id7 dir.submit | cut -d ' ' -f 4`
 
 cd /work/swanson/jingchao/wrf/code
 id9=`sbatch -d afterany:$id7 ncl.submit | cut -d ' ' -f 4`
+id10=`sbatch -d afterany:$id9 push.submit | cut -d ' ' -f 4`
 
-echo "Submitted batch job $id1 (ungrib) -> $id2 (metgrid) -> $id3 (WEPS) -> $id4 (REAL1) -> $id5 (convert) -> $id6 (real2) -> $id7 (wrf) -> $id8 (transfer) -> $id9 (NCL)"
+echo "Submitted batch job $id1 (ungrib) -> $id2 (metgrid) -> $id3 (WEPS) -> $id4 (REAL1) -> $id5 (convert) -> $id6 (real2) -> $id7 (wrf) -> $id8 (transfer) -> $id9 (NCL) -> $id10 (push)"
