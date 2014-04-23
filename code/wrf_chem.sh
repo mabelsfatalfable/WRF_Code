@@ -80,7 +80,8 @@ find . -type d -mtime +2 | xargs rm -rf
 [[ ! -d "`date +%Y%m%d`" ]] && mkdir `date +%Y%m%d`; cd `date +%Y%m%d`
 ndir="`date +%y%m%d%H`"
 mkdir $ndir && cd $ndir
-cp /work/swanson/jingchao/wrf/WRF_forecast/WPS/dir.submit ./
+#cp /work/swanson/jingchao/wrf/WRF_forecast/WPS/dir.submit ./
+cp /work/swanson/jingchao/wrf/code/dir.submit ./
 id8=`sbatch -d afterany:$id7 dir.submit | cut -d ' ' -f 4`
 
 cd /work/swanson/jingchao/wrf/code

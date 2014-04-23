@@ -24,7 +24,7 @@ directory="/work/swanson/jingchao/wrf/data/images/$run/"
 cd /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/
 ls wrfout* | xargs -n1 basename > /work/swanson/jingchao/wrf/data/images/$run/$run'_list'
 cd /work/swanson/jingchao/wrf/data/images/$run
-ln -sf /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/wrfout* ./
+#ln -sf /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/wrfout* ./
 flist='"'$run'_list"'
 
 # Create directories for images 
