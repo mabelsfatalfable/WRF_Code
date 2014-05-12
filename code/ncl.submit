@@ -15,7 +15,7 @@ module load WRF
 
 # Set run time of model
 cd /work/swanson/jingchao/wrf/data/images
-find . -type d -mtime +2 | xargs rm -rf
+find . -type d -mtime +1 | xargs rm -rf
 run="`date +%y%m%d%H`"
 [[ ! -d "$run" ]] && mkdir $run
 directory="/work/swanson/jingchao/wrf/data/images/$run/"
@@ -24,7 +24,7 @@ directory="/work/swanson/jingchao/wrf/data/images/$run/"
 cd /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/
 ls wrfout* | xargs -n1 basename > /work/swanson/jingchao/wrf/data/images/$run/$run'_list'
 cd /work/swanson/jingchao/wrf/data/images/$run
-#ln -sf /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/wrfout* ./
+ln -sf /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/wrfout* ./
 flist='"'$run'_list"'
 
 # Create directories for images 
@@ -39,7 +39,6 @@ mkdir $directory'images/reflectivity'
 # Modify directory so it is passed correctly to NCL scripts
 directory='"'$directory'"'
 
-
 # Run NCL scripts
 #echo "Working on 2m temperature plots ==============================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_2mtemp.ncl dir=$directory filelist=$flist &> /dev/null
@@ -48,10 +47,13 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_2mtemp.ncl dir=$directory
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_2mdewpoint.ncl dir=$directory filelist=$flist &> /dev/null
 
 #echo "Working on 3hr precipitation plots ============================"
-ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_3hrprecip.ncl dir=$directory filelist=$flist &> /dev/null
+ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_1hrprecip.ncl dir=$directory filelist=$flist &> /dev/null
 
 #echo "Working on reflectivity plots ================================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_reflectivity.ncl dir=$directory filelist=$flist &> /dev/null
 
 #echo "Working on upper air plots ===================================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_upperair.ncl dir=$directory filelist=$flist &> /dev/null
+
+cd /work/swanson/jingchao/wrf/data/images/$run
+rm wrfout*
