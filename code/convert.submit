@@ -1,0 +1,15 @@
+#!/bin/sh
+#SBATCH --job-name=convert
+#SBATCH --ntasks=1              
+#SBATCH --mem-per-cpu=1G      
+#SBATCH --time=1:00:00        
+#SBATCH --error=convert.err
+#SBATCH --output=convert.out
+#SBATCH --partition=devel
+
+module load WRF/WRF
+sed -i "143s/.*/ chem_opt                            = 2,        11,    11,/" namelist.input
+rm `date +%Y`*
+rename NEI_FLAMBE2014 2014 NEI_FLAMBE2014*
+
+mpirun convert_emiss.exe &> convert.log

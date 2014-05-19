@@ -7,7 +7,7 @@ date +%y/%m/%d
 #Download wrf_only files into the source directory
 cd /work/swanson/jingchao/wrf/WRF_forecast/WPS/source
 #Delete old fils if exist
-files=nam.t00z.awphys*; [[ "${#files[@]}" -gt 0 ]] && rm nam.t00z.awphys* 2> /dev/null
+files=nam.*; [[ "${#files[@]}" -gt 0 ]] && rm nam.* 2> /dev/null
 #Fetch Files
 
 hour=`date +%H`
@@ -31,10 +31,10 @@ done
 #STEP 1: Build the links using ./link_grib.csh
 cd /work/swanson/jingchao/wrf/WRF_forecast/WPS
 grfiles=GRIBFILE*; [[ "${#grfiles[@]}" -gt 0 ]] && rm GRIBFILE* 2> /dev/null
-./link_grib.csh source/nam.t00z.awphys*
+./link_grib.csh source/nam.t"$h_update"z.awphys*
 #STEP 2: Unpack the GRIB data using ./ungrib.exe
-sed -i "4s/.*/ start_date = '`date +%Y-%m-%d`_00:00:00'/" namelist.wps				###CHANGE HERE###
-sed -i "5s/.*/ end_date = '`date --date='72 hour' +%Y-%m-%d`_00:00:00'/" namelist.wps		###CHANGE HERE###
+sed -i "4s/.*/ start_date = '`date +%Y-%m-%d`_"$h_update":00:00'/" namelist.wps				###CHANGE HERE###
+sed -i "5s/.*/ end_date = '`date --date='72 hour' +%Y-%m-%d`_"$h_update":00:00'/" namelist.wps		###CHANGE HERE###
 ugfiles=FILE*; [[ "${#ugfiles[@]}" -gt 0 ]] && rm FILE* 2> /dev/null
 id1=`sbatch ungrib.submit | cut -d ' ' -f 4`
 #STEP 3: Generate input data for WRFV3
@@ -63,17 +63,41 @@ cd /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/data/smoke/FLAMBE/
 for i in {0..23}; do
 wget ftp://ftp.nrlmry.navy.mil/pub/receive/hyer/arctas/flambe_arctas_hourly/`date --date='2 day' +%Y`/`date --date='2 day' +%Y%m`/flambe_arctas_`date --date='2 day' +%Y%m%d``printf "%02d" $i`00.dat &> /dev/null
 done
+#day4
+cd /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/data/smoke/FLAMBE/
+[[ ! -d "`date --date='3 day' +%Y`" ]] && mkdir `date --date='3 day' +%Y`; cd `date --date='3 day' +%Y`
+[[ ! -d "`date --date='3 day' +%Y%m`" ]] && mkdir `date --date='3 day' +%Y%m`; cd `date --date='3 day' +%Y%m`
+for i in {0..23}; do
+wget ftp://ftp.nrlmry.navy.mil/pub/receive/hyer/arctas/flambe_arctas_hourly/`date --date='3 day' +%Y`/`date --date='3 day' +%Y%m`/flambe_arctas_`date --date='3 day' +%Y%m%d``printf "%02d" $i`00.dat &> /dev/null
+done
+#day5
+cd /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/data/smoke/FLAMBE/
+[[ ! -d "`date --date='4 day' +%Y`" ]] && mkdir `date --date='4 day' +%Y`; cd `date --date='4 day' +%Y`
+[[ ! -d "`date --date='4 day' +%Y%m`" ]] && mkdir `date --date='4 day' +%Y%m`; cd `date --date='4 day' +%Y%m`
+for i in {0..23}; do
+wget ftp://ftp.nrlmry.navy.mil/pub/receive/hyer/arctas/flambe_arctas_hourly/`date --date='4 day' +%Y`/`date --date='4 day' +%Y%m`/flambe_arctas_`date --date='4 day' +%Y%m%d``printf "%02d" $i`00.dat &> /dev/null
+done
 
 #Run WEPS
 cd /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/results; rm * 2> /dev/null
 cd /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/run
+# 01 24 00 
+# 07 06 06
+# 13 12 12 
+# 19 18 18
+#case $h_update in
+#        "00" ) weps_start=01 weps_end=24 ;; "06" ) weps_start=07 weps_end=06 ;;
+#        "12" ) weps_start=13 weps_end=12 ;; "18" ) weps_start=19 weps_end=18 ;;
+#esac
 sed -i "5s/.*/START_YEAR                   : `date +%Y`       2012       2012/" namelist.weps
 sed -i "6s/.*/START_MONTH                  : `date +%m`         09         09/" namelist.weps
 sed -i "7s/.*/START_DAY                    : `date +%d`         15         15/" namelist.weps
+#sed -i "8s/.*/START_HOUR                   : $weps_start         01         01/" namelist.weps
 sed -i "8s/.*/START_HOUR                   : 01         01         01/" namelist.weps
-sed -i "9s/.*/END_YEAR                     : `date --date='48 hour' +%Y`       2012       2012/" namelist.weps
-sed -i "10s/.*/END_MONTH                    : `date --date='48 hour' +%m`         09         09/" namelist.weps
-sed -i "11s/.*/END_DAY                      : `date --date='48 hour' +%d`         29         29/" namelist.weps
+sed -i "9s/.*/END_YEAR                     : `date --date='72 hour' +%Y`       2012       2012/" namelist.weps
+sed -i "10s/.*/END_MONTH                    : `date --date='72 hour' +%m`         09         09/" namelist.weps
+sed -i "11s/.*/END_DAY                      : `date --date='72 hour' +%d`         29         29/" namelist.weps
+#sed -i "12s/.*/END_HOUR                     : $weps_end         24         24/" namelist.weps
 sed -i "12s/.*/END_HOUR                     : 24         24         24/" namelist.weps
 id3=`sbatch weps.submit | cut -d ' ' -f 4`
 
