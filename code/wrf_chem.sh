@@ -81,23 +81,13 @@ done
 #Run WEPS
 cd /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/results; rm * 2> /dev/null
 cd /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/run
-# 01 24 00 
-# 07 06 06
-# 13 12 12 
-# 19 18 18
-#case $h_update in
-#        "00" ) weps_start=01 weps_end=24 ;; "06" ) weps_start=07 weps_end=06 ;;
-#        "12" ) weps_start=13 weps_end=12 ;; "18" ) weps_start=19 weps_end=18 ;;
-#esac
 sed -i "5s/.*/START_YEAR                   : `date +%Y`       2012       2012/" namelist.weps
 sed -i "6s/.*/START_MONTH                  : `date +%m`         09         09/" namelist.weps
 sed -i "7s/.*/START_DAY                    : `date +%d`         15         15/" namelist.weps
-#sed -i "8s/.*/START_HOUR                   : $weps_start         01         01/" namelist.weps
 sed -i "8s/.*/START_HOUR                   : 01         01         01/" namelist.weps
 sed -i "9s/.*/END_YEAR                     : `date --date='72 hour' +%Y`       2012       2012/" namelist.weps
 sed -i "10s/.*/END_MONTH                    : `date --date='72 hour' +%m`         09         09/" namelist.weps
 sed -i "11s/.*/END_DAY                      : `date --date='72 hour' +%d`         29         29/" namelist.weps
-#sed -i "12s/.*/END_HOUR                     : $weps_end         24         24/" namelist.weps
 sed -i "12s/.*/END_HOUR                     : 24         24         24/" namelist.weps
 id3=`sbatch weps.submit | cut -d ' ' -f 4`
 
