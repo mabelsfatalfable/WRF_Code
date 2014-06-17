@@ -5,11 +5,29 @@
 #SBATCH --time=1:00:00        
 #SBATCH --error=convert.err
 #SBATCH --output=convert.out
-#SBATCH --partition=devel
+#SBATCH --qos=jwang7
 
 module load WRF/WRF
 sed -i "143s/.*/ chem_opt                            = 2,        11,    11,/" namelist.input
-rm `date +%Y`*
-rename NEI_FLAMBE2014 2014 NEI_FLAMBE2014*
 
-mpirun convert_emiss.exe &> convert.log
+hour=`date --utc +%H`
+case $hour in
+        "00" ) h_update=00 ;; "01" ) h_update=00 ;; "02" ) h_update=00 ;; "03" ) h_update=00 ;;
+        "04" ) h_update=00 ;; "05" ) h_update=00 ;; "06" ) h_update=06 ;; "07" ) h_update=06 ;;
+        "08" ) h_update=06 ;; "09" ) h_update=06 ;; "10" ) h_update=06 ;; "11" ) h_update=06 ;;
+        "12" ) h_update=12 ;; "13" ) h_update=12 ;; "14" ) h_update=12 ;; "15" ) h_update=12 ;;
+        "16" ) h_update=12 ;; "17" ) h_update=12 ;; "18" ) h_update=18 ;; "19" ) h_update=18 ;;
+        "20" ) h_update=18 ;; "21" ) h_update=18 ;; "22" ) h_update=18 ;; "23" ) h_update=18 ;;
+esac
+
+if [ $h_update -eq 00 ]; then
+rm `date +%Y`*					#DELETE old files
+rename NEI_FLAMBE2014 2014 NEI_FLAMBE2014*	#Rename new files
+mpirun convert_emiss.exe &> convert.log		#Run convert
+elif [ $h_update -eq 12 ]; then
+rm `date +%Y`*                                  #DELETE old files
+rename NEI_FLAMBE2014 2014 NEI_FLAMBE2014*      #Rename new files
+mpirun convert_emiss.exe &> convert.log         #Run convert
+else
+echo "skip convert at 06/18"
+fi

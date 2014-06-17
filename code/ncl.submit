@@ -13,10 +13,20 @@
 
 module load WRF
 
+hour=`date --utc +%H`
+case $hour in
+        "00" ) h_update=00 ;; "01" ) h_update=00 ;; "02" ) h_update=00 ;; "03" ) h_update=00 ;;
+        "04" ) h_update=00 ;; "05" ) h_update=00 ;; "06" ) h_update=06 ;; "07" ) h_update=06 ;;
+        "08" ) h_update=06 ;; "09" ) h_update=06 ;; "10" ) h_update=06 ;; "11" ) h_update=06 ;;
+        "12" ) h_update=12 ;; "13" ) h_update=12 ;; "14" ) h_update=12 ;; "15" ) h_update=12 ;;
+        "16" ) h_update=12 ;; "17" ) h_update=12 ;; "18" ) h_update=18 ;; "19" ) h_update=18 ;;
+        "20" ) h_update=18 ;; "21" ) h_update=18 ;; "22" ) h_update=18 ;; "23" ) h_update=18 ;;
+esac
+
 # Set run time of model
 cd /work/swanson/jingchao/wrf/data/images
-find . -type d -mtime +1 | xargs rm -rf
-run="`date +%y%m%d%H`"
+find . -type d -mtime +2 | xargs rm -rf
+run="`date --utc +%y%m%d`$h_update"
 [[ ! -d "$run" ]] && mkdir $run
 directory="/work/swanson/jingchao/wrf/data/images/$run/"
 
