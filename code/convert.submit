@@ -22,12 +22,22 @@ esac
 
 if [ $h_update -eq 00 ]; then
 rm `date +%Y`*					#DELETE old files
+ln -sf /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/results/NEI_FLAMBE* ./
 rename NEI_FLAMBE2014 2014 NEI_FLAMBE2014*	#Rename new files
+sed -i "12s/.*/ end_year                            = `date --utc --date='84 hour' +%Y`,   2012,  2012,/" namelist.input       ###CHANGE HERE###
+sed -i "13s/.*/ end_month                           = `date --utc --date='84 hour' +%m`,  07,  07,/" namelist.input            ###CHANGE HERE###
+sed -i "14s/.*/ end_day                             = `date --utc --date='84 hour' +%d`,    27,   27,/" namelist.input         ###CHANGE HERE###
 mpirun convert_emiss.exe &> convert.log		#Run convert
+
 elif [ $h_update -eq 12 ]; then
 rm `date +%Y`*                                  #DELETE old files
+ln -sf /work/swanson/jingchao/wrf/WRF_forecast/WEPS_v01/results/NEI_FLAMBE* ./
 rename NEI_FLAMBE2014 2014 NEI_FLAMBE2014*      #Rename new files
+sed -i "12s/.*/ end_year                            = `date --utc --date='84 hour' +%Y`,   2012,  2012,/" namelist.input       ###CHANGE HERE###
+sed -i "13s/.*/ end_month                           = `date --utc --date='84 hour' +%m`,  07,  07,/" namelist.input            ###CHANGE HERE###
+sed -i "14s/.*/ end_day                             = `date --utc --date='84 hour' +%d`,    27,   27,/" namelist.input         ###CHANGE HERE###
 mpirun convert_emiss.exe &> convert.log         #Run convert
+
 else
 echo "skip convert at 06/18"
 fi
