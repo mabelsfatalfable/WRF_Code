@@ -56,7 +56,7 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_2mtemp.ncl dir=$directory
 #echo "Working on 2m dewpoint plots =================================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_2mdewpoint.ncl dir=$directory filelist=$flist &> /dev/null
 
-#echo "Working on 3hr precipitation plots ============================"
+#echo "Working on 1hr precipitation plots ============================"
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_1hrprecip.ncl dir=$directory filelist=$flist &> /dev/null
 
 #echo "Working on reflectivity plots ================================="
@@ -64,6 +64,12 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_reflectivity.ncl dir=$dir
 
 #echo "Working on upper air plots ===================================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_upperair.ncl dir=$directory filelist=$flist &> /dev/null
+
+#echo "Working on PM2.5 plots ========================================"
+ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_pm25.ncl dir=$directory filelist=$flist &> /dev/null
+
+#echo "Working on O3 plots ==========================================="
+ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_o3.ncl dir=$directory filelist=$flist &> /dev/null
 
 cd /work/swanson/jingchao/wrf/data/images/$run
 rm wrfout*

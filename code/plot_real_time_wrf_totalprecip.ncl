@@ -1,5 +1,5 @@
 ; Clint Aegerter
-; Plots 3 hr precipitation for the real-time WRF run
+; Plots total precipitation for the real-time WRF run
 
 ;  LOAD FUNCTIONS AND PROCEDURES
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
@@ -16,9 +16,10 @@ res@Footer = False
 mpres = True
 pltres = True
 
-; WRF output directory
-;dir       = "/work/jwang7/caegerter/test/14021500/wrfout/"
-;filelist  = "14021500_list"
+; WRF output directory (COMMENT OUT FOR REAL-TIME RUN, UNCOMMENT FOR TEST)
+;dir       = "/work/jwang7/caegerter/wrfout/"
+;filelist  = "14081312_list"
+
 str       = "string"
 filename  = asciiread(dir + filelist, -1, str)
 nfile     = dimsizes(filename)
@@ -64,18 +65,18 @@ do i = 0, nfile-1
  type = "png"
  ;type = "ps"
  ;type = "pdf
- wks   = gsn_open_wks(type, dir + "images/precip/" + "WRF_3hrprecip_" + fileTime)
+ wks   = gsn_open_wks(type, dir + "images/precip/" + "WRF_totalprecip_" + fileTime)
  gsn_define_colormap(wks,"BlAqGrYeOrReVi200")
   
  ; Precip
  rain_exp = wrf_user_getvar(a, "RAINNC", 0)
  rain_con = wrf_user_getvar(a, "RAINC", 0)
  rain_tot = rain_exp + rain_con
- if ( i .ne. 0) then
-  rain_tot_3hr             = rain_tot - rain_tot_save
-  rain_tot_3hr             = rain_tot_3hr * 0.0393701 ; convert to inches
-  rain_tot_3hr@description = "3-hr Accumulated Precip"
-  rain_tot_3hr@units       = "in" 
+ if (i .ne. 0) then
+  rain_tot_acc             = rain_tot + rain_tot_save
+  rain_tot_acc             = rain_tot_acc * 0.0393701 ; convert to inches
+  rain_tot_acc@description = "Total Accumulated Precip"
+  rain_tot_acc@units       = "in" 
  end if
  ; Save precip values for use in next loop
  rain_exp_save = rain_exp
@@ -87,15 +88,18 @@ do i = 0, nfile-1
   opts                      = res
   opts@cnFillOn             = True
   opts@cnLevelSelectionMode = "ExplicitLevels"
-  opts@cnLevels             = (/.01, .05, .10, .15, .20, .25, .50, \
-                             .75, 1.00, 1.50, 2.00, 3.00, 4.00/)
-  opts@lbLabelStrings       = (/".01", ".05", ".10", ".15", ".20", ".25", ".50", \
-                             ".75", "1.00", "1.50", "2.00", "3.00", "4.00"/)
+  opts@cnLevels             = (/.01, .05, .10, .50, 1.00, 1.50, 2.00, \
+                             2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, \
+                             8.00, 9.00, 10.00, 11.00, 12.00/)
+  opts@cnExplicitLabelBarLabelsOn = True
+  opts@lbLabelStrings       = (/".01", ".05", ".10", ".50", "1.00", "1.50", "2.00", \
+                             "2.50", "3.00", "3.50", "4.00", "5.00", "6.00", "7.00", \
+			     "8.00", "9.00", "10.00", "11.00", "12.00"/)
   opts@pmLabelBarWidthF     = 0.875
   opts@pmLabelBarHeightF    = 0.2
   opts@gsnSpreadColors      = True
   opts@gsnSpreadColorStart  = 0
-  contour_rain              = wrf_contour(a, wks, rain_tot_3hr, opts)
+  contour_rain              = wrf_contour(a, wks, rain_tot_acc, opts)
   delete(opts)
 
   ; Make plot

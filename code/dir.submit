@@ -8,5 +8,5 @@
 #SBATCH --output=dir.out
 
 cp /work/swanson/jingchao/wrf/WRF_forecast/WPS/met_em* ./
-cp -r /work/swanson/jingchao/wrf/WRF_forecast/WRFV3/test/em_real/wrfout ./
+cp -r /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout ./
 #ln -sf met_em* /work/swanson/jingchao/wrf/WRF_forecast/WRFV3/test/em_real
