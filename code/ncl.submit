@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1                      # 1 cores
 #SBATCH --mem-per-cpu=2g                # Minimum memory required per CPU (in megabytes)
 #SBATCH --time=01:00:00                 # Run time in hh:mm:ss
-#SBATCH --qos=jwang7
+#SBATCH --qos=wangesmc
 #SBATCH --error=ncl.err
 #SBATCH --output=ncl.out
 
@@ -45,7 +45,8 @@ mkdir $directory'images/temp'
 mkdir $directory'images/upper_air'
 mkdir $directory'images/precip'
 mkdir $directory'images/reflectivity'
-
+mkdir $directory'images/pm25'
+mkdir $directory'images/o3'
 # Modify directory so it is passed correctly to NCL scripts
 directory='"'$directory'"'
 
@@ -58,6 +59,9 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_2mdewpoint.ncl dir=$direc
 
 #echo "Working on 1hr precipitation plots ============================"
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_1hrprecip.ncl dir=$directory filelist=$flist &> /dev/null
+
+#echo "Working on total precipitation plots =========================="
+ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_totalprecip.ncl dir=$directory filelist=$flist
 
 #echo "Working on reflectivity plots ================================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_reflectivity.ncl dir=$directory filelist=$flist &> /dev/null
@@ -72,4 +76,8 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_pm25.ncl dir=$directory f
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_o3.ncl dir=$directory filelist=$flist &> /dev/null
 
 cd /work/swanson/jingchao/wrf/data/images/$run
+
+#Copy image files to shruti
+cp -r /work/swanson/jingchao/wrf/data/images/$run /work/visunl/sdagguma/images
+
 rm wrfout*

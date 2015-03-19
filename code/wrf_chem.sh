@@ -110,6 +110,17 @@ mkdir $ndir && cd $ndir
 cp /work/swanson/jingchao/wrf/code/dir.submit ./
 id8=`sbatch -d afterany:$id7 dir.submit | cut -d ' ' -f 4`
 
+########################
+#Copy files to Shruti
+cd /work/visunl/sdagguma
+find . -type d -mtime +2 | xargs rm -rf
+[[ ! -d "`date --utc +%Y%m%d`" ]] && mkdir `date --utc +%Y%m%d`; cd `date --utc +%Y%m%d`
+ndir="`date --utc +%y%m%d`$h_update"
+mkdir $ndir && cd $ndir
+cp /work/swanson/jingchao/wrf/code/dir.submit ./
+sbatch dir.submit
+########################
+
 cd /work/swanson/jingchao/wrf/code
 id9=`sbatch -d afterany:$id7 ncl.submit | cut -d ' ' -f 4`
 id10=`sbatch -d afterany:$id9 push.submit | cut -d ' ' -f 4`
