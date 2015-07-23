@@ -16,9 +16,16 @@ res@Footer = False
 mpres = True
 pltres = True
 
-; WRF output directory
-;dir       = "/shared/aerosol/gshared/wrf_forcast/14021500/wrfout/"
-;filelist  = "2014_wrfout_d01"
+; Plot type
+;type  = "X11"
+type = "png"
+;type = "ps"
+;type = "pdf
+
+; WRF output directory (COMMENT OUT FOR REAL-TIME RUN)
+;dir       = "/work/jwang7/caegerter/test/14081312/"
+;filelist  = "14081312_list"
+
 str       = "string"
 filename  = asciiread(dir + filelist, -1, str)
 nfile     = dimsizes(filename)
@@ -52,18 +59,17 @@ plot   = new(1, graphic)
 
 ; Do loop to read and plot each file
 do i = 0, nfile-1
- a = addfile(dir + filename(i) + ".nc", "r")
+ a = addfile(dir + filename(i) + ".nc", "w")
  time = charactertostring(a->Times(0, :))
- res@TimeLabel = time
+ a@START_DATE = a@SIMULATION_START_DATE
+ a@START_DATE = str_sub_str(a@START_DATE, "_", " ")
+ a@START_DATE = a@START_DATE + " UTC"
+ timeLabel = str_sub_str(time, "_", " ")
+ res@TimeLabel = timeLabel + " UTC"
  fileTime = str_sub_str(time, ":", "_")
  lat  = a->XLAT
  lon  = a->XLONG
  
- ; Plot type
- ;type  = "X11"
- type = "png"
- ;type = "ps"
- ;type = "pdf
  wks   = gsn_open_wks(type, dir + "images/dewpoint/" + "WRF_2mdewpoint_" + fileTime)
  gsn_define_colormap(wks,"BlAqGrYeOrReVi200")
   
@@ -121,12 +127,13 @@ do i = 0, nfile-1
  opts@ContourParameters = (/-30., 80., 5./)
  opts@pmLabelBarWidthF  = 0.875
  opts@pmLabelBarHeightF = 0.2
+ opts@pmLabelBarOrthogonalPosF = -.075
  contour_tdf2           = wrf_contour(a, wks, tdf2, opts)
  delete(opts)
 
  ; Make plots
  plot = wrf_map_overlays(a, wks, (/contour_tdf2, vector, contour_slp/), pltres, mpres)
-
+a@START_DATE = a@SIMULATION_START_DATE
 end do
 
 end

@@ -16,8 +16,14 @@ res@Footer = False
 mpres = True
 pltres = True
 
-; WRF output directory (COMMENT OUT FOR REAL-TIME RUN, UNCOMMENT FOR TEST)
-;dir       = "/work/jwang7/caegerter/wrfout/"
+; Plot type (PNG FOR REAL-TIME)
+;type  = "X11"
+type = "png"
+;type = "ps"
+;type = "pdf
+
+; WRF output directory (COMMENT OUT FOR REAL-TIME RUN)
+;dir       = "/work/jwang7/caegerter/test/14081312/"
 ;filelist  = "14081312_list"
 
 str       = "string"
@@ -53,18 +59,17 @@ plot   = new(1, graphic)
 
 ; Do loop to read and plot each file
 do i = 0, nfile-1
- a = addfile(dir + filename(i) + ".nc", "r")
+ a = addfile(dir + filename(i) + ".nc", "w")
  time = charactertostring(a->Times(0, :))
- res@TimeLabel = time
+ a@START_DATE = a@SIMULATION_START_DATE
+ a@START_DATE = str_sub_str(a@START_DATE, "_", " ")
+ a@START_DATE = a@START_DATE + " UTC"
+ timeLabel = str_sub_str(time, "_", " ")
+ res@TimeLabel = timeLabel + " UTC"
  fileTime = str_sub_str(time, ":", "_")
  lat  = a->XLAT
  lon  = a->XLONG
 
- ; Plot type
- ;type  = "X11"
- type = "png"
- ;type = "ps"
- ;type = "pdf
  wks   = gsn_open_wks(type, dir + "images/precip/" + "WRF_totalprecip_" + fileTime)
  gsn_define_colormap(wks,"BlAqGrYeOrReVi200")
   
@@ -72,17 +77,12 @@ do i = 0, nfile-1
  rain_exp = wrf_user_getvar(a, "RAINNC", 0)
  rain_con = wrf_user_getvar(a, "RAINC", 0)
  rain_tot = rain_exp + rain_con
- if (i .ne. 0) then
-  rain_tot_acc             = rain_tot + rain_tot_save
-  rain_tot_acc             = rain_tot_acc * 0.0393701 ; convert to inches
-  rain_tot_acc@description = "Total Accumulated Precip"
-  rain_tot_acc@units       = "in" 
- end if
- ; Save precip values for use in next loop
- rain_exp_save = rain_exp
- rain_con_save = rain_con
- rain_tot_save = rain_tot
-
+ rain_tot = rain_tot * 0.0393701 ; convert to inches
+  rain_tot@lat2d = a->XLAT(0,:,:)
+  rain_tot@lon2d = a->XLONG(0,:,:)
+  rain_tot@description = "Total Accumulated Precip"
+  rain_tot@units       = "in"
+ 
  if (i .ne. 0) then
  ; Plotting options for precip
   opts                      = res
@@ -97,15 +97,24 @@ do i = 0, nfile-1
 			     "8.00", "9.00", "10.00", "11.00", "12.00"/)
   opts@pmLabelBarWidthF     = 0.875
   opts@pmLabelBarHeightF    = 0.2
+  opts@pmLabelBarOrthogonalPosF = -.075
   opts@gsnSpreadColors      = True
   opts@gsnSpreadColorStart  = 0
-  contour_rain              = wrf_contour(a, wks, rain_tot_acc, opts)
-  delete(opts)
+  ;contour_rain              = wrf_contour(a, wks, rain_tot, opts)
+  ;delete(opts)
 
   ; Make plot
-  plot = wrf_map_overlays(a, wks, (/contour_rain/), pltres, mpres)
+  if (min(rain_tot) .eq. max(rain_tot)) then
+    rain_tot(0,0) = -9999.
+    contour_rain = wrf_contour(a, wks, rain_tot, opts)
+    plot = wrf_map_overlays(a, wks, (/contour_rain/), pltres, mpres)
+  else
+    contour_rain = wrf_contour(a, wks, rain_tot, opts)
+    plot = wrf_map_overlays(a, wks, (/contour_rain/), pltres, mpres)
+  end if
  end if
 
+a@START_DATE = a@SIMULATION_START_DATE
 end do
 
 end

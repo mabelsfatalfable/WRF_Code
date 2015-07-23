@@ -16,9 +16,16 @@ res@Footer = False
 mpres = True
 pltres = True
 
-; WRF output directory
-;dir       = "/work/jwang7/caegerter/test/14021500/wrfout/"
-;filelist  = "14021500_list"
+; Plot type
+;type  = "X11"
+type = "png"
+;type = "ps"
+;type = "pdf
+
+; WRF output directory (COMMENT OUT FOR REAL-TIME RUN)
+;dir       = "/work/jwang7/caegerter/test/14081312/"
+;filelist  = "14081312_list"
+
 str       = "string"
 filename  = asciiread(dir + filelist, -1, str)
 nfile     = dimsizes(filename)
@@ -52,18 +59,16 @@ plot   = new(1, graphic)
 
 ; Do loop to read and plot each file
 do i = 0, nfile-1
- a = addfile(dir + filename(i) + ".nc", "r")
+ a = addfile(dir + filename(i) + ".nc", "w")
  time = charactertostring(a->Times(0, :))
- res@TimeLabel = time
+ a@START_DATE = a@SIMULATION_START_DATE
+ a@START_DATE = str_sub_str(a@START_DATE, "_", " ")
+ a@START_DATE = a@START_DATE + " UTC"
+ timeLabel = str_sub_str(time, "_", " ")
+ res@TimeLabel = timeLabel + " UTC"
  fileTime = str_sub_str(time, ":", "_")
  lat  = a->XLAT
  lon  = a->XLONG
-
- ; Plot type
- ;type  = "X11"
- type = "png"
- ;type = "ps"
- ;type = "pdf
  wks   = gsn_open_wks(type, dir + "images/precip/" + "WRF_1hrprecip_" + fileTime)
  gsn_define_colormap(wks,"BlAqGrYeOrReVi200")
   
@@ -93,15 +98,25 @@ do i = 0, nfile-1
                              ".75", "1.00", "1.50", "2.00", "3.00", "4.00"/)
   opts@pmLabelBarWidthF     = 0.875
   opts@pmLabelBarHeightF    = 0.2
+  opts@pmLabelBarOrthogonalPosF = -.075
   opts@gsnSpreadColors      = True
   opts@gsnSpreadColorStart  = 0
-  contour_rain              = wrf_contour(a, wks, rain_tot_1hr, opts)
-  delete(opts)
+;  contour_rain              = wrf_contour(a, wks, rain_tot_1hr, opts)
+;  delete(opts)
 
   ; Make plot
-  plot = wrf_map_overlays(a, wks, (/contour_rain/), pltres, mpres)
+  if (min(rain_tot_1hr) .eq. max(rain_tot_1hr)) then
+    rain_tot_1hr(0,0) = -9999.
+    contour_rain = wrf_contour(a, wks, rain_tot_1hr, opts)
+    plot = wrf_map_overlays(a, wks, (/contour_rain/), pltres, mpres)
+  else
+    contour_rain = wrf_contour(a, wks, rain_tot_1hr, opts)
+    plot = wrf_map_overlays(a, wks, (/contour_rain/), pltres, mpres)
+  end if
+ delete(opts)
  end if
 
+a@START_DATE = a@SIMULATION_START_DATE
 end do
 
 end

@@ -21,12 +21,11 @@ pltres = True
 type = "png"
 ;type = "ps"
 ;type = "pdf
-;wks   = gsn_open_wks(type, "WRF_UpperAir")
-;gsn_define_colormap(wks,"BlAqGrYeOrReVi200")
 
-; WRF output directory
-;dir       = "/shared/aerosol/gshared/wrf_forcast/14021500/wrfout/"
-;filelist  = "2014_wrfout_d01"
+; WRF output directory (COMMENT OUT FOR REAL-TIME RUN)
+;dir       = "/work/jwang7/caegerter/test/14081312/"
+;filelist  = "14081312_list"
+
 str       = "string"
 filename  = asciiread(dir + filelist, -1, str)
 nfile     = dimsizes(filename)
@@ -64,9 +63,13 @@ plot   = new(1, graphic)
 
 ; Do loop to read and plot each file
 do i = 0, nfile-1
- a = addfile(dir + filename(i) + ".nc", "r")
+ a = addfile(dir + filename(i) + ".nc", "w")
  time = charactertostring(a->Times(0, :))
- res@TimeLabel = time
+ a@START_DATE = a@SIMULATION_START_DATE
+ a@START_DATE = str_sub_str(a@START_DATE, "_", " ")
+ a@START_DATE = a@START_DATE + " UTC"
+ timeLabel = str_sub_str(time, "_", " ")
+ res@TimeLabel = timeLabel + " UTC"
  fileTime = str_sub_str(time, ":", "_")
  lat  = a->XLAT
  lon  = a->XLONG
@@ -142,7 +145,8 @@ do i = 0, nfile-1
   opts_tc@cnFillOn          = True
   opts_tc@pmLabelBarWidthF  = 0.875
   opts_tc@pmLabelBarHeightF = 0.2
-
+  opts_tc@pmLabelBarOrthogonalPosF = -.075
+ 
   ; Plotting options for Wind Vectors
   opts_wind            = res
   opts_wind@FieldTitle = "Wind"
@@ -155,6 +159,7 @@ do i = 0, nfile-1
   opts_spd@cnFillOn             = True
   opts_spd@pmLabelBarWidthF     = 0.875
   opts_spd@pmLabelBarHeightF    = 0.2
+  opts_spd@pmLabelBarOrthogonalPosF = -.075
   opts_spd@cnLevelSelectionMode = "ExplicitLevels"
   opts_spd@cnFillColors         = (/"white", "skyblue1", "steelblue2", "steelblue3", "blue1", "blue3", \
                                    "purple4", "purple3", "purple1", "magenta3", "magenta2", "violet"/)
@@ -303,6 +308,7 @@ do i = 0, nfile-1
   delete(opts_z)
   delete(opts_spd)
  end do
+a@START_DATE = a@SIMULATION_START_DATE
 end do
 
 end
