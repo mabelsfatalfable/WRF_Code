@@ -111,8 +111,9 @@ cp /work/swanson/jingchao/wrf/code/dir.submit ./
 id8=`sbatch -d afterany:$id7 dir.submit | cut -d ' ' -f 4`
 
 ########################
-#Copy files to Shruti
-cd /work/visunl/sdagguma
+#Copy files to igorso
+#cd /work/visunl/sdagguma
+cd /work/visunl/igorso
 find . -type d -mtime +2 | xargs rm -rf
 [[ ! -d "`date --utc +%Y%m%d`" ]] && mkdir `date --utc +%Y%m%d`; cd `date --utc +%Y%m%d`
 ndir="`date --utc +%y%m%d`$h_update"

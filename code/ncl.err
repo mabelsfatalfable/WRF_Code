@@ -1,1 +1,8 @@
-cp: accessing `/work/visunl/sdagguma/images': Permission denied
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images': File exists
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images/dewpoint': File exists
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images/temp': File exists
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images/upper_air': File exists
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images/precip': File exists
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images/reflectivity': File exists
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images/pm25': File exists
+mkdir: cannot create directory `/work/swanson/jingchao/wrf/data/images/15072312/images/o3': File exists

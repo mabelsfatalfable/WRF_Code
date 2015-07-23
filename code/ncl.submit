@@ -78,6 +78,7 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_o3.ncl dir=$directory fil
 cd /work/swanson/jingchao/wrf/data/images/$run
 
 #Copy image files to shruti
-cp -r /work/swanson/jingchao/wrf/data/images/$run /work/visunl/sdagguma/images
+#cp -r /work/swanson/jingchao/wrf/data/images/$run /work/visunl/sdagguma/images
+cp -r /work/swanson/jingchao/wrf/data/images/$run /work/visunl/igorso/images
 
 rm wrfout*
