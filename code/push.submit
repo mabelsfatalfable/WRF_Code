@@ -10,4 +10,5 @@
 cd /work/swanson/jingchao/wrf/data/images
 folder=`find ./ -type d -name "1*" | sort -nr | head -1 | cut -d / -f 2`
 #scp -qr $folder trlemburg@meteo.unl.edu:/home/trlemburg/public_html/img/wrf
-scp -qr $folder esmc@meteo.unl.edu:/home/esmc/public_html/img/wrf
+#scp -qr $folder esmc@meteo.unl.edu:/home/esmc/public_html/img/wrf
+scp -qr $folder atmoschem@esmc.unl.edu:/home/atmoschem/www/esmc/img/wrf
