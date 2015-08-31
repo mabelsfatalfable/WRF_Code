@@ -47,6 +47,8 @@ mkdir $directory'images/precip'
 mkdir $directory'images/reflectivity'
 mkdir $directory'images/pm25'
 mkdir $directory'images/o3'
+mkdir $directory'stations' # Create directories for station/point data txt files
+
 # Modify directory so it is passed correctly to NCL scripts
 directory='"'$directory'"'
 
@@ -61,7 +63,7 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_2mdewpoint.ncl dir=$direc
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_1hrprecip.ncl dir=$directory filelist=$flist &> /dev/null
 
 #echo "Working on total precipitation plots =========================="
-ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_totalprecip.ncl dir=$directory filelist=$flist
+ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_totalprecip.ncl dir=$directory filelist=$flist &> /dev/null
 
 #echo "Working on reflectivity plots ================================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_reflectivity.ncl dir=$directory filelist=$flist &> /dev/null
@@ -74,6 +76,9 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_pm25.ncl dir=$directory f
 
 #echo "Working on O3 plots ==========================================="
 ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_o3.ncl dir=$directory filelist=$flist &> /dev/null
+
+#echo "Working on station files ======================================"
+ncl /work/swanson/jingchao/wrf/code/get_station_data.ncl dir=$directory filelist=$flist &> /dev/null
 
 cd /work/swanson/jingchao/wrf/data/images/$run
 
