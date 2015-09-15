@@ -9,9 +9,6 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/wrf/WRFUserARW.ncl"
 
 begin
 
-pi = 3.14159
-dtor = pi / 180.
-
 ; Basic resources
 res = True
 res@MainTitle = "UNL Real-Time WRF"
@@ -19,8 +16,8 @@ res@Footer = False
 mpres = True
 pltres = True
 
-; WRF output directory (COMMENT OUT FOR REAL-TIME RUN, UN-COMMENT FOR TEST)
-;dir       = "/work/jwang7/caegerter/test/14081312/"
+; WRF output directory (COMMENT OUT FOR REAL-TIME RUN, UNCOMMENT FOR TEST)
+;dir       = "/work/jwang7/caegerter/wrfout/"
 ;filelist  = "14081312_list"
 
 str       = "string"
@@ -36,11 +33,6 @@ nstation = dimsizes(stationName)
 T2 = new((/3, 24/), float)
 TD = new((/3, 24/), float)
 precip = new((/3, 24/), float)
-u10 = new((/3, 24/), float)
-v10 = new((/3, 24/), float)
-windSpd = new((/3, 24/), float)
-windDir = new((/3, 24/), float)
-
 
 ; Do loop to read and plot each file
 do j = 0, nstation-1
@@ -105,81 +97,8 @@ do j = 0, nstation-1
    end if
    end if
 
-   ; Wind
-  u10read = wrf_user_getvar(a, "U10", 0)
-  v10read = wrf_user_getvar(a, "V10", 0)
-  u10read = u10read*2.23694 ; convert to mph
-  v10read = v10read*2.23694
-   u10read@units = "mph"
-   v10read@units = "mph"
-   u10read@lat2d = a->XLAT(0,:,:)
-   v10read@lon2d = a->XLONG(0,:,:)
-  if (i .ge. 1 .and. i .le. 24) then
-    u10(0, i-1) = u10read(closest(0,0), closest(0,1))
-    v10(0, i-1) = v10read(closest(0,0), closest(0,1))
-  else if (i .ge. 25 .and. i .le. 48) then
-    u10(1, i-1-24) = u10read(closest(0,0), closest(0,1))
-    v10(1, i-1-24) = v10read(closest(0,0), closest(0,1))
-  else if (i .ge. 49 .and. i .le. 72) then
-    u10(2, i-1-48) = u10read(closest(0,0), closest(0,1))
-    v10(2, i-1-48) = v10read(closest(0,0), closest(0,1))
-  end if
-  end if
-  end if
-
-
-    
   end if
  end do
- 
-   windSpd = sqrt((u10) ^ 2. + (v10) ^ 2.)
-
-  do k = 0, 2
-   do m = 0, 23
-    ; Wind is from south and west (dir > 0, dir < 90)
-    if (u10(k, m) .gt. 0 .and. v10(k, m) .gt. 0) then
-     windDir(k, m) = atan(abs(v10(k, m)) / abs(u10(k, m)))
-    
-    ; Wind is from north and west (dir > 270, dir < 360)
-    else if (u10(k, m) .gt. 0 .and. v10(k, m) .lt. 0) then
-     windDir(k, m) = 360. * dtor - atan(abs(v10(k, m)) / abs(u10(k, m)))
-    
-    ; Wind is from south and east (dir > 90, dir < 180)
-    else if (u10(k, m) .gt. 0 .and. v10(k, m) .gt. 0) then
-     windDir(k, m) = 180. * dtor - atan(abs(v10(k, m)) / abs(u10(k, m)))
-
-    ; Wind is from north and east
-    else if (u10(k, m) .lt. 0 .and. v10(k, m) .gt. 0) then
-     windDir(k, m) = 180. * dtor + atan(abs(v10(k, m)) / abs(u10(k, m)))
-
-    ; Wind is from south
-    else if (u10(k, m) .eq. 0 .and. v10(k, m) .gt. 0) then
-     windDir(k, m) = 90. * dtor
-
-    ; Wind is from north
-    else if (u10(k, m) .eq. 0 .and. v10(k, m) .gt. 0) then
-     windDir(k, m) = 270. * dtor
-
-    ; Wind is from west
-    else if (u10(k, m) .gt. 0 .and. v10(k, m) .eq. 0) then
-     windDir(k, m) = 0. * dtor
-
-    ; Wind is from east 
-    else if (u10(k, m) .lt. 0 .and. v10(k, m) .eq. 0) then
-     windDir(k, m) = 180. * dtor
-
-    end if
-    end if
-    end if
-    end if
-    end if
-    end if
-    end if
-    end if
-    
-       end do
-  end do
-windDir = windDir / dtor
 
 ; Output to txt files
 opt = True
@@ -195,24 +114,6 @@ write_matrix(TD, "24(F8.5, 3X)", opt)
 ; Precip file
 opt@fout = dir + "stations/" + stationName(j) + "_" + strInitTime + "_precip.txt"
 write_matrix(precip, "24(F8.5, 3X)", opt)
-
-; Wind Speed file
-opt@fout = dir + "stations/" + stationName(j) + "_" + strInitTime + "_windspd.txt"
-write_matrix(windSpd, "24(F10.5, 3X)", opt)
-
-; Wind Direction file
-opt@fout = dir + "stations/" + stationName(j) + "_" + strInitTime + "_winddir.txt"
-write_matrix(windDir, "24(F10.5, 3X)", opt)
-
-; U Speed file
-opt@fout = dir + "stations/" + stationName(j) + "_" + strInitTime + "_windU.txt"
-write_matrix(u10, "24(F10.5, 3X)", opt)
-
-; V Speed file
-opt@fout = dir + "stations/" + stationName(j) + "_" + strInitTime + "_windV.txt"
-write_matrix(v10, "24(F10.5, 3X)", opt)
-
-
 
 end do
 
