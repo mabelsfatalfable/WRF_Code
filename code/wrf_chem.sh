@@ -122,6 +122,18 @@ cp /work/swanson/jingchao/wrf/code/dir.submit ./
 sbatch dir.submit
 ########################
 
+########################
+#Push wrf_chem outputs to esmc servr
+cd /work/swanson/jingchao/wrf/data/netcdf
+find . -type d -mtime +2 | xargs rm -rf
+[[ ! -d "`date --utc +%Y%m%d`" ]] && mkdir `date --utc +%Y%m%d`; cd `date --utc +%Y%m%d`
+ndir="`date --utc +%y%m%d`$h_update"
+mkdir $ndir && cd $ndir
+cp /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/* ./
+cd /work/swanson/jingchao/wrf/data/netcdf
+scp -qr `date --utc +%Y%m%d` atmoschem@esmc.unl.edu:/home/atmoschem/www/esmc/netCDFs
+#######################
+
 cd /work/swanson/jingchao/wrf/code
 id9=`sbatch -d afterany:$id7 ncl.submit | cut -d ' ' -f 4`
 id10=`sbatch -d afterany:$id9 push.submit | cut -d ' ' -f 4`
