@@ -80,6 +80,9 @@ ncl /work/swanson/jingchao/wrf/code/plot_real_time_wrf_o3.ncl dir=$directory fil
 #echo "Working on station files ======================================"
 ncl /work/swanson/jingchao/wrf/code/get_station_data.ncl dir=$directory filelist=$flist &> /dev/null
 
+#echo "Working on netCDF additions ==================================="
+ncl /work/swanson/jingchao/wrf/code/addvar_ncdf.ncl dir=$directory filelist=$flist
+
 cd /work/swanson/jingchao/wrf/data/images/$run
 
 #Copy image files to shruti
