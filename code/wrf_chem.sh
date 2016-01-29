@@ -108,7 +108,7 @@ ndir="`date --utc +%y%m%d`$h_update"
 mkdir $ndir && cd $ndir
 #cp /work/swanson/jingchao/wrf/WRF_forecast/WPS/dir.submit ./
 cp /work/swanson/jingchao/wrf/code/dir.submit ./
-id8=`sbatch -d afterany:$id7 dir.submit | cut -d ' ' -f 4`
+id8=`sbatch -d afterok:$id7 dir.submit | cut -d ' ' -f 4`
 
 ########################
 #Copy files to igorso
@@ -124,18 +124,18 @@ sbatch dir.submit
 
 ########################
 #Push wrf_chem outputs to esmc servr
-cd /work/swanson/jingchao/wrf/data/netcdf
-find . -type d -mtime +2 | xargs rm -rf
-[[ ! -d "`date --utc +%Y%m%d`" ]] && mkdir `date --utc +%Y%m%d`; cd `date --utc +%Y%m%d`
-ndir="`date --utc +%y%m%d`$h_update"
-mkdir $ndir && cd $ndir
-cp /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/* ./
-cd /work/swanson/jingchao/wrf/data/netcdf
-scp -qr `date --utc +%Y%m%d` atmoschem@esmc.unl.edu:/home/atmoschem/www/esmc/netCDFs
+#cd /work/swanson/jingchao/wrf/data/netcdf
+#find . -type d -mtime +2 | xargs rm -rf
+#[[ ! -d "`date --utc +%Y%m%d`" ]] && mkdir `date --utc +%Y%m%d`; cd `date --utc +%Y%m%d`
+#ndir="`date --utc +%y%m%d`$h_update"
+#mkdir $ndir && cd $ndir
+#cp /work/swanson/jingchao/wrf/WRF_forecast/WRF_chem/test/em_real/wrfout/* ./
+#cd /work/swanson/jingchao/wrf/data/netcdf
+#scp -qr `date --utc +%Y%m%d` atmoschem@esmc.unl.edu:/home/atmoschem/www/esmc/netCDFs
 #######################
 
 cd /work/swanson/jingchao/wrf/code
-id9=`sbatch -d afterany:$id7 ncl.submit | cut -d ' ' -f 4`
-id10=`sbatch -d afterany:$id9 push.submit | cut -d ' ' -f 4`
+id9=`sbatch -d afterok:$id7 ncl.submit | cut -d ' ' -f 4`
+id10=`sbatch -d afterok:$id9 push.submit | cut -d ' ' -f 4`
 
 echo "Submitted batch job $id1 (ungrib) -> $id2 (metgrid) -> $id3 (WEPS) -> $id4 (REAL1) -> $id5 (convert) -> $id6 (real2) -> $id7 (wrf) -> $id8 (transfer) -> $id9 (NCL) -> $id10 (push)"
