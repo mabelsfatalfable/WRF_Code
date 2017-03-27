@@ -22,8 +22,10 @@ case $hour in
 esac
 
 for n in {0..72}; do    ###CHANGE HERE###
-URL1="http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.20`date --utc +%y%m%d`/nam.t"$h_update"z.awphys`printf "%02d" $n`.grb2.tm00"
-URL2="http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.20`date --utc +%y%m%d`/nam.t"$h_update"z.awphys`printf "%02d" $n`.grb2.tm00.idx"
+#URL1="http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.20`date --utc +%y%m%d`/nam.t"$h_update"z.awphys`printf "%02d" $n`.grb2.tm00"
+#URL2="http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.20`date --utc +%y%m%d`/nam.t"$h_update"z.awphys`printf "%02d" $n`.grb2.tm00.idx"
+URL1="http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.20`date --utc +%y%m%d`/nam.t"$h_update"z.awphys`printf "%02d" $n`.tm00.grib2"
+URL2="http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.20`date --utc +%y%m%d`/nam.t"$h_update"z.awphys`printf "%02d" $n`.tm00.grib2.idx"
 wget $URL1 &> /dev/null
 wget $URL2 &> /dev/null
 done
